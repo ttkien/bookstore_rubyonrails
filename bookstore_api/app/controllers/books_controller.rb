@@ -17,6 +17,13 @@ class BooksController < ApplicationController
   def create
     @book = Book.new(book_params)
 
+    category_id =  book_params[:book_category_id]
+
+    debugger
+    category = BookCategory.find(category_id)
+
+    @book.book_category_id = category.id
+
     if @book.save
       render json: @book, status: :created, location: @book
     else
@@ -46,6 +53,6 @@ class BooksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def book_params
-      params.require(:book).permit(:title, :description, :published_date, :cover_url)
+      params.require(:book).permit(:title, :description, :published_date, :cover_url, :book_category_id)
     end
 end
