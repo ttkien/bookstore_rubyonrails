@@ -16,7 +16,8 @@ class SearchController < ApplicationController
       render json: {
         status: 'error',
         code: 400,
-        message: "key length must be greater than #{MIN_LENGTH} and less than #{MAX_LENGTH}"
+        message: "key length must be greater than #{MIN_LENGTH} and" \
+        " less than #{MAX_LENGTH}"
       }
       return
     else
@@ -24,11 +25,10 @@ class SearchController < ApplicationController
     end
 
     search_operation.search
-
     render json: {
       current_page: page,
-      per_page: limit,
-      total_entries: search_operation.total,
+      page_size: limit,
+      total_items: search_operation.total,
       keyword: key,
       data: search_operation.results.includes(:book_category)
     }
