@@ -1,10 +1,16 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: [:show, :update, :destroy]
+  before_action :set_book, only: [:show, :update, :destroy, :search]
 
   # GET /books
   def index
-    @books = Book.all
+    @books = Book.where(book_category_id: params[:book_category_id])
+    render json: @books
+  end
 
+   # GET /books
+   def search
+
+    @books = Book.search_any_word(params[:key])
     render json: @books
   end
 
@@ -16,13 +22,12 @@ class BooksController < ApplicationController
   # POST /books
   def create
     @book = Book.new(book_params)
-
+    
     category_id =  book_params[:book_category_id]
 
-    debugger
-    category = BookCategory.find(category_id)
+    category = BookCategory.find_by(id: category_id)
 
-    @book.book_category_id = category.id
+    @book.book_category = category
 
     if @book.save
       render json: @book, status: :created, location: @book
@@ -46,13 +51,13 @@ class BooksController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_book
-      @book = Book.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_book
+    @book ||= Book.find_by(id: params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def book_params
-      params.require(:book).permit(:title, :description, :published_date, :cover_url, :book_category_id)
-    end
+  # Only allow a trusted parameter "white list" through.
+  def book_params
+    params.require(:book).permit(:title, :description, :published_date, :cover_url, :book_category_id)
+  end
 end

@@ -4,7 +4,6 @@ class BookCategoriesController < ApplicationController
   # GET /book_categories
   def index
     @book_categories = BookCategory.all
-
     render json: @book_categories
   end
 
