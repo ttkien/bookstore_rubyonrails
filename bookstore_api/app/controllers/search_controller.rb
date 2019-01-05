@@ -25,17 +25,25 @@ class SearchController < ApplicationController
     end
 
     search_operation.search
+    data = search_operation.results.includes(:book_category).load
     render json: {
-      current_page: page,
+      current_page: page.to_i,
       page_size: limit,
       total_items: search_operation.total,
       keyword: key,
-      data: search_operation.results.includes(:book_category)
+      data: data,
+      number_of_items: data.size,
+      total_page: ((search_operation.total / limit) + 1).to_i
     }
   end
 
   def page
-    params[:page] || 1
+    page_number = params[:page].to_i
+    if page_number.nil? || page_number.zero?
+      return 1
+    else
+      return page_number
+    end
   end
 
   def limit
